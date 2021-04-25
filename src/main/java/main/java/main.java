@@ -40,18 +40,22 @@ public class main {
     }
 
     public static void main(String[] args) throws IOException {
-
-        StringBuffer weather = fetch_weather();
-        String weather_type = processJson(weather);
-
-        System.out.println(weather_type);
         String wallpaper_path = "";
 
         TimerTask update = new TimerTask() {
             @Override
             public void run() {
-                ChangeWallpaper(wallpaper_path, weather_type);
-                System.out.println("System updated Wallpaper");
+                try{
+                    StringBuffer weather = fetch_weather();
+                    String weather_type = processJson(weather);
+                    ChangeWallpaper(wallpaper_path, weather_type);
+
+                    System.out.println("System updated Wallpaper");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         };
 
@@ -105,7 +109,7 @@ public class main {
 
     public static StringBuffer fetch_weather() throws IOException {
 //        'id=2650225' and 'id=3333229' is edinburgh, for future work maybe get current location to choose city
-        URL api = new URL("http://api.openweathermap.org/data/2.5/forecast?id=3333229&appid=04b52862199178582d63b48f1eef68e3");
+        URL api = new URL("http://api.openweathermap.org/data/2.5/forecast?id=2650225&appid=04b52862199178582d63b48f1eef68e3");
         HttpURLConnection connection = (HttpURLConnection) api.openConnection();
         connection.setRequestMethod("GET");
 
