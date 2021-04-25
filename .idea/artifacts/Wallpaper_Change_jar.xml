@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Wallpaper_Change:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Wallpaper_Change_jar</output-path>
+    <root id="archive" name="Wallpaper_Change.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="Wallpaper_Change" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/jna-jpms-5.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/sun/jna/jna/3.0.9/jna-3.0.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/jna-platform-5.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/jna-5.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20210307/json-20210307.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

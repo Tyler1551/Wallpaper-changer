@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,6 +47,8 @@ public class main {
             @Override
             public void run() {
                 try{
+                    Date date = new Date();
+                    System.out.println(date.getHours() + ":" + date.getMinutes());
                     StringBuffer weather = fetch_weather();
                     String weather_type = processJson(weather);
                     ChangeWallpaper(wallpaper_path, weather_type);
@@ -60,7 +63,7 @@ public class main {
         };
 
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(update, 0, 600000);
+        timer.scheduleAtFixedRate(update, 0, 120000);
 
 
     }
@@ -69,15 +72,15 @@ public class main {
 
         switch (weather_type){
             case "Clear":
-                wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\firewatch_sunny.jpg";
+                wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\clear_sky1.jpg";
                 break;
 
             case "Rain":
-                wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\firewatch_rain.jpg";
+                wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\rain.jpg";
                 break;
 
             case "Snow":
-                wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\firewatch_snow.png";
+                wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\snow.jpg";
                 break;
             case "Clouds":
                 wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\cloudy.jpg";
