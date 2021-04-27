@@ -1,20 +1,22 @@
 package main.java;
 
-import com.sun.jna.*;
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
-import org.json.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
-import java.time.chrono.ChronoLocalDate;
-import java.util.*;
-import java.time.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 //  Project TODO
@@ -31,11 +33,9 @@ import java.time.*;
 * GUI for user experience - set own wallpapers based on time of day and weather
 * Easy install for run on start etc
 *
-* */
+*/
 
 public class main {
-
-
 
     public static void main(String[] args) throws IOException {
 
@@ -179,6 +179,16 @@ public class main {
 
         System.out.println(weather_type);
         return weather_type;
+    }
+
+    public static String getLocation(){
+        String city = "";
+
+
+
+
+        return city;
+
     }
 
     public interface SPI extends StdCallLibrary {
