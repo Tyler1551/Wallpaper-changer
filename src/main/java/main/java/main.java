@@ -35,44 +35,20 @@ import java.time.*;
 
 public class main {
 
-    public interface SPI extends StdCallLibrary {
 
-        //from MSDN article
-        long SPI_SETDESKWALLPAPER = 20;
-        long SPIF_UPDATEINIFILE = 0x01;
-        long SPIF_SENDWININICHANGE = 0x02;
-
-        SPI INSTANCE = (SPI) Native.loadLibrary("user32", SPI.class, new HashMap<String, Object>() {
-            {
-                put(OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
-                put(OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
-            }
-        });
-
-        void SystemParametersInfo(
-                WinDef.UINT_PTR uiAction,
-                WinDef.UINT_PTR uiParam,
-                String pvParam,
-                WinDef.UINT_PTR fWinIni
-        );
-    }
 
     public static void main(String[] args) throws IOException {
-        String wallpaper_path = "";
 
+//        Create new timer to update the wallpaper every 2 minutes
         TimerTask update = new TimerTask() {
             @Override
             public void run() {
                 try{
-                    Date date = new Date();
-                    System.out.println(date.getHours() + ":" + date.getMinutes());
+//                    Fetch weather from api, storing data in StringBuffer to then be processed in Json
                     StringBuffer weather = fetch_weather();
                     String weather_type = processJson(weather);
-                    init_wallpaper(weather_type);
-//                    ChangeWallpaper(wallpaper_path, weather_type);
-
-                    System.out.println("System updated Wallpaper");
-
+//                    Change wallpaper based on the weather type
+                    change_wallpaper(weather_type);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -86,13 +62,17 @@ public class main {
 
     }
 
-    public static void init_wallpaper(String weather_type){
+    public static void change_wallpaper(String weather_type){
+//        get date object, separate hour
         Date date = new Date();
         int hour = date.getHours();
 
         System.out.println(date.getHours());
+
+//        initialise a new wallpaper path
         String wallpaper_path = "";
 
+//        Check hour of day, set wallpaper path depending on weather condition and time
 //        Morning
         if(hour >= 6 && hour < 12){
             switch (weather_type){
@@ -162,6 +142,8 @@ public class main {
             }
         }
 
+
+//        Set wallpaper using SPI class
         SPI.INSTANCE.SystemParametersInfo(
                 new WinDef.UINT_PTR(SPI.SPI_SETDESKWALLPAPER),
                 new WinDef.UINT_PTR(0),
@@ -171,12 +153,12 @@ public class main {
     }
 
     public static StringBuffer fetch_weather() throws IOException {
-//        'id=2650225' and 'id=3333229' is edinburgh, for future work maybe get current location to choose city
+//        Open API connection using API data key and city ID for Edinburgh
         URL api = new URL("http://api.openweathermap.org/data/2.5/weather?id=3333229&appid=04b52862199178582d63b48f1eef68e3");
         HttpURLConnection connection = (HttpURLConnection) api.openConnection();
         connection.setRequestMethod("GET");
 
-
+//      Create new BufferedReader, taking each line of the JSON data and appending to a content string to then return
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(connection.getInputStream()));
         String inputLine;
@@ -197,6 +179,28 @@ public class main {
 
         System.out.println(weather_type);
         return weather_type;
+    }
+
+    public interface SPI extends StdCallLibrary {
+
+        //from MSDN article
+        long SPI_SETDESKWALLPAPER = 20;
+        long SPIF_UPDATEINIFILE = 0x01;
+        long SPIF_SENDWININICHANGE = 0x02;
+
+        SPI INSTANCE = (SPI) Native.loadLibrary("user32", SPI.class, new HashMap<String, Object>() {
+            {
+                put(OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
+                put(OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
+            }
+        });
+
+        void SystemParametersInfo(
+                WinDef.UINT_PTR uiAction,
+                WinDef.UINT_PTR uiParam,
+                String pvParam,
+                WinDef.UINT_PTR fWinIni
+        );
     }
 
 }
