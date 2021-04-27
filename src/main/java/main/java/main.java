@@ -28,7 +28,7 @@ import java.time.*;
 * Get current location instead of hardcoded city ID in the API call (possible API search)
 *
 * FAR FUTURE FEATURES
-* GUI for user experience
+* GUI for user experience - set own wallpapers based on time of day and weather
 * Easy install for run on start etc
 *
 * */
@@ -91,30 +91,7 @@ public class main {
         int hour = date.getHours();
 
         System.out.println(date.getHours());
-
-        ArrayList<File> morning_wp = new ArrayList<File>();
-        ArrayList<File> day_wp = new ArrayList<File>();
-        ArrayList<File> night_wp = new ArrayList<File>();
-
-        File morning_folder = new File("C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Morning");
-        File day_folder = new File("C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Day");
-        File night_folder = new File("C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night");
-
-        File[] morning_dir = morning_folder.listFiles();
-        File[] day_dir = day_folder.listFiles();
-        File[] night_dir = night_folder.listFiles();
-
         String wallpaper_path = "";
-
-        if(morning_dir != null){
-            morning_wp.addAll(Arrays.asList(morning_dir));
-        }
-        else if(day_dir != null){
-            day_wp.addAll(Arrays.asList(day_dir));
-        }
-        else{
-            night_wp.addAll(Arrays.asList(night_dir));
-        }
 
 //        Morning
         if(hour >= 6 && hour < 12){
@@ -134,7 +111,7 @@ public class main {
             }
         }
 //        Day
-        else if(hour >= 12 && hour <= 17){
+        else if(hour >= 12 && hour < 18){
             switch (weather_type){
                 case "Clouds":
                     wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Day\\cloudy_day.jpg";
@@ -150,6 +127,23 @@ public class main {
                     break;
             }
         }
+//        Evening
+        else if(hour >= 18 && hour < 21){
+            switch (weather_type){
+                case "Clouds":
+                    wallpaper_path = "C:\\Users\\tyler\\Desktop\\Wallpaper-Change\\Wallpapers\\Evening\\cloud_evening.jpg";
+                    break;
+                case "Clear":
+                    wallpaper_path = "C:\\Users\\tyler\\Desktop\\Wallpaper-Change\\Wallpapers\\Evening\\clear_evening.jpg";
+                    break;
+                case "Rain":
+                    wallpaper_path = "C:\\Users\\tyler\\Desktop\\Wallpaper-Change\\Wallpapers\\Evening\\rain_evening.jpg";
+                    break;
+                case "Snow":
+                    wallpaper_path = "C:\\Users\\tyler\\Desktop\\Wallpaper-Change\\Wallpapers\\Evening\\snow_evening.jpg";
+                    break;
+            }
+        }
 //        Night
         else{
             switch (weather_type){
@@ -160,13 +154,12 @@ public class main {
                     wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night\\clear_night.jpg";
                     break;
                 case "Rain":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night\\rain_night.jpg";
+                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night\\rain_night.png";
                     break;
                 case "Snow":
                     wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night\\snow_night.jpg";
                     break;
             }
-
         }
 
         SPI.INSTANCE.SystemParametersInfo(
@@ -177,23 +170,9 @@ public class main {
 
     }
 
-    public static String processJson(StringBuffer weather){
-        JSONObject obj = new JSONObject(weather.toString());
-        JSONArray data = obj.getJSONArray("list");
-
-        JSONObject main = data.getJSONObject(1);
-        JSONArray weather_data = main.getJSONArray("weather");
-
-        JSONObject desc = (JSONObject) weather_data.get(0);
-        String weather_type = desc.getString("main");
-
-        System.out.println(weather_data);
-        return weather_type;
-    }
-
     public static StringBuffer fetch_weather() throws IOException {
 //        'id=2650225' and 'id=3333229' is edinburgh, for future work maybe get current location to choose city
-        URL api = new URL("http://api.openweathermap.org/data/2.5/forecast?id=2650225&appid=04b52862199178582d63b48f1eef68e3");
+        URL api = new URL("http://api.openweathermap.org/data/2.5/weather?id=3333229&appid=04b52862199178582d63b48f1eef68e3");
         HttpURLConnection connection = (HttpURLConnection) api.openConnection();
         connection.setRequestMethod("GET");
 
@@ -207,6 +186,17 @@ public class main {
         }
 
         return content;
+    }
+
+    public static String processJson(StringBuffer weather){
+        JSONObject obj = new JSONObject(weather.toString());
+        JSONArray data = obj.getJSONArray("weather");
+
+        JSONObject main = data.getJSONObject(0);
+        String weather_type = main.getString("main");
+
+        System.out.println(weather_type);
+        return weather_type;
     }
 
 }
