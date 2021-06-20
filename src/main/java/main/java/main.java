@@ -1,5 +1,9 @@
 package main.java;
 
+import com.maxmind.geoip2.WebServiceClient;
+import com.maxmind.geoip2.exception.GeoIp2Exception;
+import com.maxmind.geoip2.model.CityResponse;
+import com.maxmind.geoip2.record.City;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.win32.StdCallLibrary;
@@ -9,21 +13,22 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 //  Project TODO
 /*
 *
 * BUG FIXES:
-* Fix relative path issue (don't take absolute, find another way around this)
+* Fix relative path issue (don't take absolute, find another way around this) using basepath.concat gets from where the file is run
+* This is potentially fixed at deployment by running .exe in app folder
 *
 * FUTURE FEATURES
 * Add day/night wallpapers and set at certain times of day with weather themed wallpapers (DONE)
@@ -49,7 +54,9 @@ public class main {
                     String weather_type = processJson(weather);
 //                    Change wallpaper based on the weather type
                     change_wallpaper(weather_type);
-                } catch (IOException e) {
+                    get_location();
+
+                } catch (IOException | GeoIp2Exception e) {
                     e.printStackTrace();
                 }
 
@@ -62,85 +69,85 @@ public class main {
 
     }
 
+    public static void get_location() throws IOException, GeoIp2Exception {
+        File database = new File("C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\City_DB");
+        InetAddress ivp4 = InetAddress.getLocalHost();
+
+
+        try(WebServiceClient client = new WebServiceClient.Builder(546716, "jazeWZHCldO4ov7a").host("geolite.info").build()){
+
+            URL findip = new URL("http://bot.whatismyipaddress.com");
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(findip.openStream()));
+
+            String ip = br.readLine().trim();
+
+            InetAddress ipAddress = InetAddress.getByName(ip);
+
+            CityResponse response = client.city(ipAddress);
+
+            City city = response.getCity();
+
+            System.out.println(city.getName());
+        }
+
+
+    }
+
     public static void change_wallpaper(String weather_type){
 //        get date object, separate hour
         Date date = new Date();
         int hour = date.getHours();
 
         System.out.println(date.getHours());
+        String basePath = new File("").getAbsolutePath();
 
+
+        System.out.println("Base path: " + basePath);
 //        initialise a new wallpaper path
         String wallpaper_path = "";
 
 //        Check hour of day, set wallpaper path depending on weather condition and time
 //        Morning
         if(hour >= 6 && hour < 12){
-            switch (weather_type){
-                case "Clouds":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Morning\\cloudy_morning.jpg";
-                    break;
-                case "Clear":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Morning\\clear_morning.jpg";
-                    break;
-                case "Rain":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Morning\\rain_morning.jpg";
-                    break;
-                case "Snow":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Morning\\snow_morning.png";
-                    break;
+            switch (weather_type) {
+                case "Clouds" -> wallpaper_path = basePath.concat("/Wallpapers/Morning/cloudy_morning.jpg");
+                case "Clear" -> wallpaper_path = basePath.concat("/Wallpapers/Morning/clear_morning.jpg");
+                case "Rain" -> wallpaper_path = basePath.concat("/Wallpapers/Morning/rain_morning.jpg");
+                case "Snow" -> wallpaper_path = basePath.concat("/Wallpapers/Morning/snow_morning.jpg");
             }
         }
 //        Day
-        else if(hour >= 12 && hour < 18){
-            switch (weather_type){
-                case "Clouds":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Day\\cloudy_day.jpg";
-                    break;
-                case "Clear":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Day\\clear_day.jpg";
-                    break;
-                case "Rain":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Day\\rain_day.jpg";
-                    break;
-                case "Snow":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Day\\snow_day.jpg";
-                    break;
-            }
+        else if(hour >= 12 && hour <= 17){
+            wallpaper_path = switch (weather_type) {
+                case "Clouds" -> basePath.concat("/Wallpapers/Day/cloudy_day.jpg");
+                case "Clear" -> basePath.concat("/Wallpapers/Day/clear_day.jpg");
+                case "Rain" -> basePath.concat("/Wallpapers/Day/rain_day.jpg");
+                case "Snow" -> basePath.concat("/Wallpapers/Day/snow_day.jpg");
+                default -> wallpaper_path;
+            };
         }
 //        Evening
         else if(hour >= 18 && hour < 21){
-            switch (weather_type){
-                case "Clouds":
-                    wallpaper_path = "C:\\Users\\tyler\\Desktop\\Wallpaper-Change\\Wallpapers\\Evening\\cloud_evening.jpg";
-                    break;
-                case "Clear":
-                    wallpaper_path = "C:\\Users\\tyler\\Desktop\\Wallpaper-Change\\Wallpapers\\Evening\\clear_evening.jpg";
-                    break;
-                case "Rain":
-                    wallpaper_path = "C:\\Users\\tyler\\Desktop\\Wallpaper-Change\\Wallpapers\\Evening\\rain_evening.jpg";
-                    break;
-                case "Snow":
-                    wallpaper_path = "C:\\Users\\tyler\\Desktop\\Wallpaper-Change\\Wallpapers\\Evening\\snow_evening.jpg";
-                    break;
-            }
+            wallpaper_path = switch (weather_type) {
+                case "Clouds" -> basePath.concat("/Wallpapers/Evening/cloud_evening.jpg");
+                case "Clear" -> basePath.concat("/Wallpapers/Evening/clear_evening.jpg");
+                case "Rain" -> basePath.concat("/Wallpapers/Evening/rain_evening.jpg");
+                case "Snow" -> basePath.concat("/Wallpapers/Evening/snow_evening.png");
+                default -> wallpaper_path;
+            };
         }
 //        Night
         else{
-            switch (weather_type){
-                case "Clouds":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night\\cloudy_night.png";
-                    break;
-                case "Clear":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night\\clear_night.jpg";
-                    break;
-                case "Rain":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night\\rain_night.png";
-                    break;
-                case "Snow":
-                    wallpaper_path = "C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\Wallpapers\\Night\\snow_night.jpg";
-                    break;
-            }
+            wallpaper_path = switch (weather_type) {
+                case "Clouds" -> basePath.concat("/Wallpapers/Night/cloudy_night.png");
+                case "Clear" -> basePath.concat("/Wallpapers/Night/clear_night.jpg");
+                case "Rain" -> basePath.concat("/Wallpapers/Night/rain_night.jpg");
+                case "Snow" -> basePath.concat("/Wallpapers/Night/snow_night.jpg");
+                default -> wallpaper_path;
+            };
         }
+
 
 
 //        Set wallpaper using SPI class
@@ -179,16 +186,6 @@ public class main {
 
         System.out.println(weather_type);
         return weather_type;
-    }
-
-    public static String getLocation(){
-        String city = "";
-
-
-
-
-        return city;
-
     }
 
     public interface SPI extends StdCallLibrary {

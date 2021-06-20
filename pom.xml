@@ -22,12 +22,13 @@
         </dependency>
 
 
-        <!-- https://mvnrepository.com/artifact/com.sun.jna/jna -->
+        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna -->
         <dependency>
-            <groupId>com.sun.jna</groupId>
+            <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>3.0.9</version>
+            <version>5.8.0</version>
         </dependency>
+
 
 
         <dependency>
@@ -51,12 +52,12 @@
 
 
 <!--        geolocation    -->
-        <dependency>
-            <groupId>com.maxmind.geoip</groupId>
-            <artifactId>geoip-api</artifactId>
-            <version>1.2.11</version>
-        </dependency>
 
+        <dependency>
+            <groupId>com.maxmind.geoip2</groupId>
+            <artifactId>geoip2</artifactId>
+            <version>2.15.0</version>
+        </dependency>
 
     </dependencies>
 
