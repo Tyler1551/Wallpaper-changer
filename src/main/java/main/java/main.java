@@ -49,12 +49,15 @@ public class main {
             @Override
             public void run() {
                 try{
+//                  Get City location based off public ip
+                    String city = get_location();
+                    System.out.println(city);
 //                    Fetch weather from api, storing data in StringBuffer to then be processed in Json
-                    StringBuffer weather = fetch_weather();
+                    StringBuffer weather = fetch_weather(city);
                     String weather_type = processJson(weather);
 //                    Change wallpaper based on the weather type
                     change_wallpaper(weather_type);
-                    get_location();
+
 
                 } catch (IOException | GeoIp2Exception e) {
                     e.printStackTrace();
@@ -69,7 +72,7 @@ public class main {
 
     }
 
-    public static void get_location() throws IOException, GeoIp2Exception {
+    public static String get_location() throws IOException, GeoIp2Exception {
         File database = new File("C:\\Users\\tyler\\IdeaProjects\\Wallpaper_Change\\City_DB");
         InetAddress ivp4 = InetAddress.getLocalHost();
 
@@ -86,9 +89,17 @@ public class main {
 
             CityResponse response = client.city(ipAddress);
 
-            City city = response.getCity();
+            City c = response.getCity();
+            String city = c.toString();
 
-            System.out.println(city.getName());
+
+            JSONObject obj = new JSONObject(c);
+            JSONObject names = obj.getJSONObject("names");
+//            JSONObject en = names.getJSONObject("en");
+            String city_name = names.getString("en");
+
+
+            return city_name;
         }
 
 
@@ -159,9 +170,9 @@ public class main {
 
     }
 
-    public static StringBuffer fetch_weather() throws IOException {
+    public static StringBuffer fetch_weather(String city) throws IOException {
 //        Open API connection using API data key and city ID for Edinburgh
-        URL api = new URL("http://api.openweathermap.org/data/2.5/weather?id=3333229&appid=04b52862199178582d63b48f1eef68e3");
+        URL api = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + city + ",GB&appid=04b52862199178582d63b48f1eef68e3");
         HttpURLConnection connection = (HttpURLConnection) api.openConnection();
         connection.setRequestMethod("GET");
 
