@@ -4,11 +4,6 @@ import com.maxmind.geoip2.WebServiceClient;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.record.City;
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.win32.StdCallLibrary;
-import com.sun.jna.win32.W32APIFunctionMapper;
-import com.sun.jna.win32.W32APITypeMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,10 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 //  Project TODO
@@ -113,8 +109,6 @@ public class main {
         System.out.println(date.getHours());
         String basePath = new File("").getAbsolutePath();
 
-
-        System.out.println("Base path: " + basePath);
 //        initialise a new wallpaper path
         String wallpaper_path = "";
 
@@ -159,20 +153,12 @@ public class main {
             };
         }
 
-
-
-//        Set wallpaper using SPI class
-        SPI.INSTANCE.SystemParametersInfo(
-                new WinDef.UINT_PTR(SPI.SPI_SETDESKWALLPAPER),
-                new WinDef.UINT_PTR(0),
-                wallpaper_path,
-                new WinDef.UINT_PTR(SPI.SPIF_UPDATEINIFILE | SPI.SPIF_SENDWININICHANGE));
-
+        wallpaper_changer.change(wallpaper_path);
     }
 
     public static StringBuffer fetch_weather(String city) throws IOException {
 //        Open API connection using API data key and city ID for Edinburgh
-        URL api = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + city + ",GB&appid=04b52862199178582d63b48f1eef68e3");
+        URL api = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=04b52862199178582d63b48f1eef68e3");
         HttpURLConnection connection = (HttpURLConnection) api.openConnection();
         connection.setRequestMethod("GET");
 
@@ -198,27 +184,4 @@ public class main {
         System.out.println(weather_type);
         return weather_type;
     }
-
-    public interface SPI extends StdCallLibrary {
-
-        //from MSDN article
-        long SPI_SETDESKWALLPAPER = 20;
-        long SPIF_UPDATEINIFILE = 0x01;
-        long SPIF_SENDWININICHANGE = 0x02;
-
-        SPI INSTANCE = (SPI) Native.loadLibrary("user32", SPI.class, new HashMap<String, Object>() {
-            {
-                put(OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
-                put(OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
-            }
-        });
-
-        void SystemParametersInfo(
-                WinDef.UINT_PTR uiAction,
-                WinDef.UINT_PTR uiParam,
-                String pvParam,
-                WinDef.UINT_PTR fWinIni
-        );
-    }
-
 }
