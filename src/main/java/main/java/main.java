@@ -39,6 +39,10 @@ import java.util.TimerTask;
 public class main {
 
     public static void main(String[] args) throws IOException {
+//        initialise UI
+//        UI.initialiseWindow();
+        new UI();
+
 
 //        Create new timer to update the wallpaper every 2 minutes
         TimerTask update = new TimerTask() {
@@ -50,22 +54,17 @@ public class main {
                     System.out.println(city);
 //                    Fetch weather from api, storing data in StringBuffer to then be processed in Json
                     StringBuffer weather = fetch_weather(city);
-                    String weather_type = processJson(weather);
+                    String weather_type = processWeather(weather);
 //                    Change wallpaper based on the weather type
                     change_wallpaper(weather_type);
-
-
                 } catch (IOException | GeoIp2Exception e) {
                     e.printStackTrace();
                 }
 
             }
         };
-
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(update, 0, 120000);
-
-
     }
 
     public static String get_location() throws IOException, GeoIp2Exception {
@@ -75,25 +74,21 @@ public class main {
 
         try(WebServiceClient client = new WebServiceClient.Builder(546716, "jazeWZHCldO4ov7a").host("geolite.info").build()){
 
+//            Query website to find public ip and save to string
             URL findip = new URL("http://bot.whatismyipaddress.com");
-
             BufferedReader br = new BufferedReader(new InputStreamReader(findip.openStream()));
-
             String ip = br.readLine().trim();
 
+//            Get city from public ip
             InetAddress ipAddress = InetAddress.getByName(ip);
-
             CityResponse response = client.city(ipAddress);
-
             City c = response.getCity();
             String city = c.toString();
 
-
+//          Find city name in english
             JSONObject obj = new JSONObject(c);
             JSONObject names = obj.getJSONObject("names");
-//            JSONObject en = names.getJSONObject("en");
             String city_name = names.getString("en");
-
 
             return city_name;
         }
@@ -106,7 +101,7 @@ public class main {
         Date date = new Date();
         int hour = date.getHours();
 
-        System.out.println(date.getHours());
+//        Set base path of wallpapers for project folder
         String basePath = new File("").getAbsolutePath();
 
 //        initialise a new wallpaper path
@@ -174,7 +169,7 @@ public class main {
         return content;
     }
 
-    public static String processJson(StringBuffer weather){
+    public static String processWeather(StringBuffer weather){
         JSONObject obj = new JSONObject(weather.toString());
         JSONArray data = obj.getJSONArray("weather");
 
