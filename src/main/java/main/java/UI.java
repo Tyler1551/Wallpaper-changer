@@ -2,6 +2,7 @@ package main.java;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -16,8 +17,13 @@ import java.util.ArrayList;
 *
 */
 
+
 public class UI extends Frame {
     Button buttons[];
+
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    int h = screenSize.height;
+    int w = screenSize.width;
 
     public UI(){
         buttons = new Button[2];
@@ -33,10 +39,16 @@ public class UI extends Frame {
         }
 
         Button customise_paper = buttons_array.get(0);
+        Button current_weather = buttons_array.get(1);
 
-        customise_paper.addActionListener(new ActionListeners());
+        customise_paper.addActionListener(new CustomisePaper());
+        current_weather.addActionListener(new CurrentWeather());
+
+
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        setSize(400,400);
+        setSize(w/2,h/2);
+        setLocationRelativeTo(null);
+
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e){
@@ -48,5 +60,42 @@ public class UI extends Frame {
         setVisible(true);
     }
 
+    public class CustomisePaper implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Frame frame = new Frame();
 
+            frame.setSize(w/2, h/2);
+            frame.setLocationRelativeTo(null);
+
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    frame.dispose();
+                }
+            });
+            frame.setVisible(true);
+        }
+    }
+
+   public class CurrentWeather implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Frame frame = new Frame();
+
+
+            frame.setSize(w/2, h/2);
+            frame.setLocationRelativeTo(null);
+
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    frame.dispose();
+                }
+            });
+            frame.setVisible(true);
+        }
+    }
 }
+
+
+
+
