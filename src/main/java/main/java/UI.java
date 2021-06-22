@@ -34,6 +34,7 @@ public class UI extends Frame {
 
         Button customise_paper = buttons_array.get(0);
 
+        customise_paper.addActionListener(new ActionListeners());
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setSize(400,400);
 
