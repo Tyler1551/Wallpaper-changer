@@ -79,14 +79,23 @@ public class main {
             BufferedReader br = new BufferedReader(new InputStreamReader(findip.openStream()));
             String ip = br.readLine().trim();
 
+            System.out.println(ip);
+
 //            Get city from public ip
             InetAddress ipAddress = InetAddress.getByName(ip);
+            System.out.println(ipAddress);
+
             CityResponse response = client.city(ipAddress);
+            System.out.println(response);
+
             City c = response.getCity();
+            System.out.println(c);
             String city = c.toString();
 
 //          Find city name in english
             JSONObject obj = new JSONObject(c);
+            System.out.println(obj);
+
             JSONObject names = obj.getJSONObject("names");
             String city_name = names.getString("en");
 
